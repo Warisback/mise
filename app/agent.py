@@ -206,8 +206,13 @@ def run_openai(trigger: str, source: str, run_id: str) -> None:
 
 
 def start(trigger: str, source: str = "manual") -> str:
+    # One nightly run at a time: a second L press joins the run in progress instead of ordering twice.
+    busy = next((rid for rid, r in _runs.items() if r.get("status") == "running"), None)
+    if busy:
+        return busy
     run_id = "run_" + uuid.uuid4().hex[:8]
-    target = {"anthropic": run, "openai": run_openai, "scripted": run_scripted}[provider()]
+    _runs[run_id] = {"status": "running"}  # claim the slot before the thread starts, so a fast double press can't race
+    target ={"anthropic": run, "openai": run_openai, "scripted": run_scripted}[provider()]
     threading.Thread(target=target, args=(trigger, source, run_id), daemon=True).start()
     return run_id
 

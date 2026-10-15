@@ -46,7 +46,8 @@ def report_csv() -> str:
         if a["tool"] == "delivery_charge" and a["status"] == "executed":
             deliveries[(a.get("input") or {}).get("order_action_id")] = a["stripe_id"]
     for o in reversed(_orders(executed_only=False)):
-        day = time.strftime("%Y-%m-%d", time.localtime(o["ts"]))
+        # Weekday-first text so Excel keeps it as written instead of a too-narrow date cell (########).
+        day = time.strftime("%a %d %b %Y %H:%M", time.localtime(o["ts"]))
         for ln in (o.get("input") or {}).get("lines") or []:
             net = int(ln["qty"]) * int(ln["unit_price"] or 0)
             w.writerow([day, o["counterparty"], ln["item"].replace("_", " "), ln["qty"], ln["unit"],
