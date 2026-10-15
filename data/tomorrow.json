@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-16",
+  "weekday": 4,
+  "temp": 16.7,
+  "rain": 9.4,
+  "weather_source": "Open-Meteo forecast",
+  "payday": 0,
+  "bank_holiday": 0,
+  "event": 1,
+  "event_name": "Sold-out gig at the Roundhouse, 5 minutes' walk (synthetic)",
+  "bookings": 124,
+  "avg_spend": 3800
+}

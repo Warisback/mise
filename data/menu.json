@@ -1,0 +1,40 @@
+{
+  "dishes": [
+    {
+      "name": "Grilled sea bass",
+      "per_cover": 0.25,
+      "uses": {
+        "sea_bass": 0.2,
+        "lemons": 0.5,
+        "herbs": 0.1
+      }
+    },
+    {
+      "name": "Tomato & burrata",
+      "per_cover": 0.3,
+      "uses": {
+        "tomatoes": 0.15,
+        "burrata": 0.5,
+        "herbs": 0.05
+      }
+    },
+    {
+      "name": "Courgette risotto",
+      "per_cover": 0.25,
+      "uses": {
+        "courgettes": 0.15,
+        "butter": 0.03,
+        "cream": 0.05
+      }
+    },
+    {
+      "name": "House salad",
+      "per_cover": 0.35,
+      "uses": {
+        "salad": 0.08,
+        "tomatoes": 0.05,
+        "lemons": 0.25
+      }
+    }
+  ]
+}

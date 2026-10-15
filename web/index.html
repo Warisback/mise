@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mise: tomorrow's order, done tonight</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600&display=swap" rel="stylesheet" />
+<style>
+  :root { --ink:#202020; --muted:#787878; --soft:#f2f2f2; --line:#e6e6e6; --paid:#477a5b; --danger:#ac5252;
+    --rainbow: linear-gradient(110deg,#d9c2ff 3%,#fbf8ae 25%,#ffc5ee 51%,#bbc0ff 77%,#b7e2fa 100%); }
+  * { box-sizing: border-box; } html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: "DM Sans", Arial, sans-serif; color: var(--ink); background: #fff; letter-spacing: -0.01em; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+  nav { position: sticky; top: 0; z-index: 20; background: #ffffffe6; backdrop-filter: blur(14px); border-bottom: 1px solid #f0f0f0; }
+  nav .wrap { display: flex; align-items: center; gap: 26px; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 8px; font-size: 22px; font-weight: 550; letter-spacing: -1px; }
+  .brand i { width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 38% 15%, #6a6a6a, #101010 70%); box-shadow: 0 0 10px 2px #e3bbff; }
+  nav .links { display: flex; gap: 22px; font-size: 13px; color: var(--muted); margin-left: 12px; }
+  nav .links a:hover { color: var(--ink); }
+  .btn { display: inline-flex; align-items: center; gap: 12px; border-radius: 999px; padding: 13px 22px; font-size: 14px; font-weight: 500; transition: transform .25s, box-shadow .25s; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 7px 22px #0002; }
+  .btn-dark { color: #fff; border: 1.5px solid transparent; background: linear-gradient(#1a1a1a,#030403) padding-box, var(--rainbow) border-box; box-shadow: inset 0 2px 7px #ffffff55; }
+  .btn-soft { background: linear-gradient(#fff,#ececec); border: 1px solid #d8d8d8; color: #343434; }
+  nav .btn { margin-left: auto; padding: 10px 18px; font-size: 13px; }
+  .eyebrow { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); display: inline-flex; align-items: center; gap: 8px; }
+  .eyebrow::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--paid); }
+  .hero { padding: 26px 0 0; }
+  .hero-card { position: relative; overflow: hidden; border-radius: 44px; background: radial-gradient(ellipse at 85% 30%, #fff 0%, #fff0 40%), linear-gradient(120deg,#f4f4f4,#e2e2e2); padding: 92px 64px 80px; min-height: 560px; }
+  .hero h1 { font-size: clamp(46px, 6.4vw, 92px); font-weight: 450; letter-spacing: -0.065em; line-height: 1.02; margin: 22px 0 22px; max-width: 900px; }
+  .hero h1 span { color: #9a9a9a; }
+  .hero p { font-size: 17px; color: #6f6f6f; line-height: 1.55; max-width: 560px; margin: 0 0 36px; }
+  .orb { position: absolute; right: 9%; top: 50%; transform: translateY(-50%); width: 260px; height: 260px; border-radius: 50%;
+    background: radial-gradient(circle at 38% 12%, #6a6a6a, #101010 68%);
+    box-shadow: inset 0 1px 12px #fff, 0 0 0 2px #fff, 0 0 40px 14px #e3bbff, 26px 18px 50px 14px #ffefb6, -26px -18px 44px 16px #d0e3ff;
+    animation: float 7s ease-in-out infinite; }
+  @keyframes float { 0%,100% { translate: 0 0; } 50% { translate: 0 -12px; } }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 18px 0 0; }
+  .stat { background: var(--soft); border-radius: 28px; padding: 24px 26px; }
+  .stat strong { display: block; font-size: 38px; font-weight: 450; letter-spacing: -0.05em; }
+  .stat span { font-size: 12px; color: var(--muted); }
+  .stat.red strong { color: var(--danger); } .stat.green strong { color: var(--paid); }
+  section { padding: 96px 0 0; }
+  .head { text-align: center; margin-bottom: 44px; }
+  .head h2 { font-size: clamp(32px, 4vw, 54px); font-weight: 450; letter-spacing: -0.05em; line-height: 1.08; margin: 18px 0 12px; }
+  .head h2 span { color: #9a9a9a; }
+  .head p { color: var(--muted); font-size: 15px; margin: 0; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .step { background: var(--soft); border-radius: 36px; padding: 10px; }
+  .visual { height: 220px; border-radius: 30px; position: relative; overflow: hidden; display: grid; place-items: center;
+    background: radial-gradient(ellipse at 50% 55%, #727272 0%, #353535 35%, #1d211d 75%); color: #fff; }
+  .visual::after { content: ""; position: absolute; inset: 12px; border-radius: 24px; background-image: radial-gradient(#ffffff1c .7px, transparent .8px); background-size: 8px 8px; }
+  .visual b { font-size: 54px; font-weight: 450; letter-spacing: -0.05em; z-index: 1; }
+  .visual small { position: absolute; bottom: 18px; font-size: 9px; letter-spacing: .14em; color: #e5e5e5aa; z-index: 1; }
+  .step-copy { padding: 22px 16px 24px; text-align: center; }
+  .step-copy .n { font-size: 11px; color: #8d8d8d; }
+  .step-copy h3 { font-size: 20px; font-weight: 500; letter-spacing: -.6px; margin: 8px 0; }
+  .step-copy p { font-size: 13px; color: #777; line-height: 1.6; margin: 0; }
+  .split { display: grid; grid-template-columns: 1.1fr 1fr; gap: 50px; align-items: center; background: linear-gradient(150deg,#f8f8f8,#e8e8e8); border-radius: 44px; padding: 64px 6%; }
+  .split h2 { font-size: 44px; font-weight: 450; letter-spacing: -0.05em; line-height: 1.08; margin: 18px 0 16px; }
+  .split h2 span { color: #9a9a9a; }
+  .split ul { padding: 0; list-style: none; margin: 0; } .split li { font-size: 14px; color: #6d6d6d; padding: 10px 0; border-top: 1px solid #dedede; }
+  .split li b { color: var(--ink); font-weight: 500; }
+  .receipt { background: #fff; color: #303030; max-width: 330px; margin: auto; padding: 24px 22px 16px; border-radius: 3px; font-family: "Courier New", monospace; box-shadow: 0 18px 40px #28282814; transform: rotate(4deg); transition: transform .5s; }
+  .receipt:hover { transform: rotate(0); }
+  .r-top { display: flex; justify-content: space-between; font-family: "DM Sans"; font-size: 20px; font-weight: 550; letter-spacing: -1px; padding-bottom: 14px; border-bottom: 1px dashed #d8d8d8; }
+  .r-amt { text-align: center; padding: 18px 0 12px; } .r-amt small { font-size: 9px; letter-spacing: .15em; color: #919191; }
+  .r-amt strong { display: block; font-size: 44px; letter-spacing: -2px; font-weight: 500; margin: 8px 0; }
+  .r-stamp { text-align: center; font-size: 9px; background: #ededed; color: #6a6a6a; border: 1px solid #ddd; border-radius: 5px; padding: 8px; }
+  .r-row { display: flex; justify-content: space-between; font-size: 10px; margin: 10px 0; } .r-row span:first-child { color: #7a7a7a; }
+  .rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .rule { background: var(--soft); border-radius: 20px; padding: 18px 20px; font-size: 13px; color: #6d6d6d; line-height: 1.5; }
+  .rule b { display: block; color: var(--ink); font-weight: 500; font-size: 14px; margin-bottom: 4px; } .rule code { font-size: 10px; color: #646cd7; }
+  .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .mode { border-radius: 36px; padding: 36px; min-height: 260px; position: relative; overflow: hidden; }
+  .mode.old { background: radial-gradient(ellipse at 15% 110%, #fff4c9, transparent 55%), #f2f2f2; }
+  .mode.new { background: radial-gradient(ellipse at 90% 110%, #c6d3f5, transparent 55%), radial-gradient(ellipse at 10% 90%, #ffe8f3, transparent 55%), #f2f2f2; }
+  .mode h3 { font-size: 28px; font-weight: 450; letter-spacing: -.04em; margin: 12px 0; } .mode p { font-size: 14px; color: #737373; line-height: 1.6; max-width: 420px; }
+  .final { text-align: center; padding: 110px 0 90px; background: radial-gradient(ellipse at 50% 90%, #ebe0fa, transparent 48%), radial-gradient(ellipse at 30% 80%, #fff9ce, transparent 50%), radial-gradient(ellipse at 80% 80%, #d9e5fa, transparent 50%); }
+  .final h2 { font-size: clamp(36px, 4.6vw, 62px); font-weight: 450; letter-spacing: -0.05em; margin: 18px 0 28px; } .final h2 span { color: #939393; }
+  footer { background: linear-gradient(#232323,#020302); color: #bbb; padding: 50px 0 30px; }
+  footer .big { font-size: 80px; letter-spacing: -5px; font-weight: 500; color: #ffffffba; text-align: center; margin-bottom: 30px; }
+  footer .row { display: flex; gap: 24px; font-size: 12px; border-top: 1px solid #ffffff20; padding-top: 22px; } footer .row span:first-child { margin-right: auto; }
+  .hero h1, .hero p { position: relative; z-index: 1; } .hero h1 { max-width: 66%; }
+  @media (max-width: 1100px) { .orb { display: none; } .hero h1 { max-width: none; } }
+  @media (max-width: 900px) { .orb { display: none; } .hero-card { padding: 60px 28px; } .stats, .steps, .rules, .modes, .split { grid-template-columns: 1fr; } nav .links { display: none; } }
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="brand" href="/"><i></i>mise</a>
+  <div class="links"><a href="#how">How it works</a><a href="#explained">Every pound explained</a><a href="#rules">The rules</a><a href="#stock">Your stock</a></div>
+  <a class="btn btn-dark" href="/app/">Open the console ↗</a>
+</div></nav>
+
+<div class="wrap hero">
+  <div class="hero-card">
+    <div class="orb"></div>
+    <div class="eyebrow">Restaurant buying agent</div>
+    <h1>Tomorrow's order. <span>Agreed, paid and explained before you lock up.</span></h1>
+    <p>Mise forecasts tomorrow's customers, works out what to buy, haggles with your suppliers and pays each one on a card capped at the agreed price. All inside rules you write.</p>
+    <div class="actions"><a class="btn btn-dark" href="/app/">Open the console ↗</a><a class="btn btn-soft" href="#how">How it works</a></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><strong>165</strong><span>customers forecast for Friday: 124 booked, 51 walk-ins, rain knocks off 22</span></div>
+    <div class="stat"><strong>9kg</strong><span>of sea bass ordered, not the usual 12kg</span></div>
+    <div class="stat green"><strong>£18.00</strong><span>per kg agreed. The fishmonger asked £19.50</span></div>
+    <div class="stat red"><strong>£207</strong><span>overcharge at delivery, declined. £162 paid</span></div>
+  </div>
+</div>
+
+<section id="how"><div class="wrap">
+  <div class="head"><div class="eyebrow">How it works</div><h2>Three jobs you do at 11pm. <span>Done for you.</span></h2><p>Every night after service, before the suppliers' order cut-off.</p></div>
+  <div class="steps">
+    <div class="step"><div class="visual"><b>165</b><small>FORECAST · FRIDAY</small></div><div class="step-copy"><div class="n">01</div><h3>Forecast tomorrow</h3><p>Confirmed bookings, plus walk-ins predicted from the day of the week, real London weather, local events and payday, minus your usual no-shows.</p></div></div>
+    <div class="step"><div class="visual"><b>£18.00</b><small>AGREED · ASKED £19.50</small></div><div class="step-copy"><div class="n">02</div><h3>Haggle with suppliers</h3><p>It messages each supplier on the chat you already use, opens under your last price, counters once and never goes above what you paid last time.</p></div></div>
+    <div class="step"><div class="visual"><b>£162</b><small>CARD CAP · SP-9</small></div><div class="step-copy"><div class="n">03</div><h3>Pay on a capped card</h3><p>Each order gets its own Stripe card capped at the agreed total. The card is the purchase order, so a supplier can't charge more than was agreed.</p></div></div>
+  </div>
+</div></section>
+
+<section id="explained"><div class="wrap"><div class="split">
+  <div>
+    <div class="eyebrow">Every pound explained</div>
+    <h2>Ask "why £162?" <span>Get the rule and the evidence.</span></h2>
+    <ul>
+      <li><b>The forecast:</b> bookings, walk-ins, the rain and the gig down the road.</li>
+      <li><b>The maths:</b> portions × recipe − stock on hand, at most 2 days' cover.</li>
+      <li><b>The deal:</b> what they asked, what was agreed, what you paid last time.</li>
+      <li><b>The rule:</b> the clause that allowed it, and who approved it.</li>
+      <li><b>The bookkeeper report:</b> one row per item, VAT coded, ready for your accountant or ledger.</li>
+    </ul>
+  </div>
+  <div class="receipt">
+    <div class="r-top"><span>mise</span><span>✓</span></div>
+    <div class="r-amt"><small>DELIVERY PAID</small><strong>£162.00</strong><div style="font-size:11px">Harbour Fish Co · 9kg sea bass</div></div>
+    <div class="r-stamp">PAID. MATCHES THE AGREED PRICE.</div>
+    <div class="r-row"><span>Agreed</span><span>£18.00/kg (asked £19.50)</span></div>
+    <div class="r-row"><span>Declined first</span><span>£207.00 · over cap</span></div>
+    <div class="r-row"><span>Rules</span><span>SP-3 approved · SP-7 · SP-9</span></div>
+    <div class="r-row"><span>Category</span><span>Cost of sales: food</span></div>
+    <div style="text-align:center;color:#909090;font-size:9px;margin-top:12px">Stripe test mode · no real money</div>
+  </div>
+</div></div></section>
+
+<section id="rules"><div class="wrap">
+  <div class="head"><div class="eyebrow">The rules</div><h2>You write the rules once. <span>The code enforces them.</span></h2><p>The model can't talk its way past a rule. Anything outside them waits for you.</p></div>
+  <div class="rules">
+    <div class="rule"><code>SP-1</code><b>Approved suppliers only</b>Your fishmonger, greengrocer and dairy. Nobody else gets paid.</div>
+    <div class="rule"><code>SP-2 · SP-3</code><b>£150 and under goes through</b>Anything bigger waits for one tap from you.</div>
+    <div class="rule"><code>SP-4 · SP-5</code><b>Hard ceilings</b>Never more than £600 an order or £800 a day.</div>
+    <div class="rule"><code>SP-7</code><b>Never pay more than last time</b>It haggles down, never up.</div>
+    <div class="rule"><code>SP-8</code><b>Buy for tomorrow, not the bin</b>Forecast need plus 5%, never more than 2 days' cover.</div>
+    <div class="rule"><code>SP-9</code><b>The card is the purchase order</b>Capped at the agreed total, so overcharges get declined.</div>
+  </div>
+</div></section>
+
+<section id="stock"><div class="wrap">
+  <div class="head"><div class="eyebrow">Your stock</div><h2>Old school or new school. <span>Both work.</span></h2></div>
+  <div class="modes">
+    <div class="mode old"><div class="eyebrow">Pen and paper</div><h3>Snap your stock count.</h3><p>Write what's left in the walk-in on any scrap of paper and take a photo. Mise reads it, updates what's on hand and redoes tonight's order.</p></div>
+    <div class="mode new"><div class="eyebrow">Inventory system</div><h3>Or connect your inventory.</h3><p>If you already track stock in an inventory or till system, Mise reads your menu and stock levels from it, sees what's missing and orders the difference.</p></div>
+  </div>
+</div></section>
+
+<section class="final"><div class="wrap">
+  <div class="eyebrow">Built for one-site restaurants</div>
+  <h2>Close up. <span>Tomorrow's order is already done.</span></h2>
+  <a class="btn btn-dark" href="/app/">Open the console ↗</a>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="big">mise</div>
+  <div class="row"><span>Tomorrow's order, done tonight.</span><a href="/app/">Console ↗</a><a href="#how">How it works</a></div>
+  <div class="row" style="border:0;color:#7c7c7c;font-size:11px"><span>Built at the Briefcase × Stripe hackathon, London, 15 October 2026.</span><span>Stripe test mode. No real money.</span></div>
+</div></footer>
+</body>
+</html>

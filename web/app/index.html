@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mise · buying agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Light theme: remap the palette the dashboard already uses (slate = paper and ink, indigo/emerald = green).
+    tailwind.config = { theme: { extend: { colors: {
+      slate: { 100: "#202020", 200: "#2b2b2b", 300: "#555555", 400: "#787878", 500: "#9a9a9a", 600: "#d2d2d2", 700: "#e3e3e3", 800: "#e8e8e8", 900: "#ffffff", 950: "#ededed" },
+      indigo: { 200: "#4b51a8", 300: "#5a60c0", 400: "#646cd7", 500: "#646cd7", 600: "#4b51a8" },
+      emerald: { 200: "#3f6b50", 300: "#477a5b", 400: "#477a5b", 500: "#5d8662", 600: "#477a5b", 700: "#3f6b50" },
+      rose: { 300: "#ac5252", 400: "#ac5252", 500: "#ac5252", 700: "#9a4545" },
+      amber: { 300: "#9c7631", 500: "#bc9859" },
+      sky: { 300: "#6c72b6" },
+      fuchsia: { 300: "#8e6aa8", 500: "#8e6aa8" },
+    } } } };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; }
+    .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+    .pulse { animation: pulse 1.2s ease-out 2; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(99,102,241,.6); } 100% { box-shadow: 0 0 0 24px rgba(99,102,241,0); } }
+    .fade-in { animation: fade .35s ease-out; }
+    @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    /* Visual language borrowed from FEMUR/Legwork: DM Sans, greys, soft panels, two-tone headings, receipts. */
+    :root { --rainbow: linear-gradient(110deg,#d9c2ff 3%,#fbf8ae 25%,#ffc5ee 51%,#bbc0ff 77%,#b7e2fa 100%); }
+    body { font-family: "DM Sans", Arial, sans-serif !important; background: #fff !important; letter-spacing: -0.01em; }
+    main { background: #fff; max-width: none !important; margin: 0 !important; padding: 20px 28px 60px !important; }
+    header { background: #fff; border-bottom: 1px solid #ededed !important; padding: 14px 28px !important; position: sticky; top: 0; z-index: 30; }
+    h2 { font-size: 17px; font-weight: 500 !important; letter-spacing: -0.03em; }
+    #f-covers, #m-saved, #m-over, #m-neg, #m-blocked, #m-food { font-weight: 450 !important; letter-spacing: -0.05em; }
+    #f-covers { font-size: 4.4rem; line-height: 1; }
+    #m-saved { font-size: 2.8rem; line-height: 1.05; }
+    .rounded-xl { border-radius: 28px; }
+    .rounded-2xl { border-radius: 36px; }
+    main .rounded-xl.bg-slate-900 { background: #f4f4f4; border-color: #ededed; }
+    button[class*="bg-emerald-"], button[class*="bg-rose-"], button[class*="bg-indigo-"], #run {
+      color: #fff; border-radius: 999px; border: 1.5px solid transparent;
+      background: linear-gradient(#1a1a1a,#030403) padding-box, var(--rainbow) border-box !important;
+      box-shadow: inset 0 2px 7px #ffffff55; }
+    button[class*="bg-rose-"] { background: linear-gradient(#9a4545,#7c3535) padding-box, var(--rainbow) border-box !important; }
+    .hero { background: linear-gradient(115deg,#f3f3f3,#e6e6e6); color: #202020; border: 1px solid #ececec; }
+    .hero .label { font-size: 10px; letter-spacing: .09em; color: #7d7d7d; text-transform: uppercase; }
+    .hero .label::before { content: ""; display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #477a5b; margin-right: 8px; vertical-align: .2em; }
+    .hero .title { font-size: clamp(38px, 4.6vw, 58px); font-weight: 450; letter-spacing: -0.055em; line-height: 1.04; }
+    .hero .title span { color: #979797; }
+    .hero .orb { width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle at 38% 12%, #6a6a6a, #101010 68%);
+      box-shadow: inset 0 1px 9px #fff, 0 0 0 2px #fff, 0 0 28px 10px #e3bbff, 18px 12px 36px 10px #ffefb6, -18px -12px 30px 12px #d0e3ff; }
+    .receipt { background: #fff; color: #303030; max-width: 360px; padding: 22px 22px 16px; border-radius: 3px; font-family: "Courier New", monospace;
+      box-shadow: 0 18px 40px #28282818; animation: print .65s ease-out both; }
+    .receipt .row { display: flex; justify-content: space-between; font-size: 11px; margin: 8px 0; } .receipt .row span:first-child { color: #7a7a7a; }
+    .receipt .amt { text-align: center; padding: 14px 0; border-top: 1px dashed #d8d8d8; border-bottom: 1px dashed #d8d8d8; margin: 12px 0; }
+    .receipt .amt strong { font-size: 40px; letter-spacing: -2px; font-weight: 500; display: block; }
+    .receipt .stamp { text-align: center; font-size: 10px; letter-spacing: .04em; background: #ededed; color: #6a6a6a; border: 1px solid #ddd; border-radius: 5px; padding: 8px; }
+    .receipt.declined .stamp { background: #f8eaea; color: #ac5252; border-color: #efd6d6; }
+    .receipt.declined .amt strong { color: #ac5252; text-decoration: line-through; }
+    @keyframes print { from { clip-path: inset(0 0 100% 0); opacity: .5; } to { clip-path: inset(0 0 -15px 0); opacity: 1; } }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+  <header class="border-b border-slate-800 px-4 sm:px-8 py-4 flex flex-wrap items-center gap-3">
+    <a href="/" class="text-lg font-semibold" id="company">Mise</a>
+    <span class="text-xs px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">Stripe test mode</span>
+    <div id="chips" class="flex flex-wrap gap-2 text-xs text-slate-400"></div>
+    <div class="ml-auto text-xs text-slate-500 mono">L run · D deliver · G money · R reset</div>
+  </header>
+
+  <main class="px-4 sm:px-8 py-6 space-y-6 max-w-7xl mx-auto">
+    <section class="hero rounded-2xl overflow-hidden relative">
+      <div class="orb absolute right-14 top-1/2 -translate-y-1/2 hidden md:block"></div>
+      <div class="relative px-7 sm:px-10 py-9 sm:py-11 max-w-2xl">
+        <div class="label">Restaurant buying agent</div>
+        <div class="title mt-4">Tomorrow's order. <span>Agreed, paid, and explained.</span></div>
+        <p class="mt-4 text-sm text-slate-400 max-w-md">Mise forecasts tomorrow's customers, works out what to buy, haggles with suppliers and pays each one on a card capped at the agreed price, inside Marco's rules.</p>
+      </div>
+    </section>
+    <nav class="flex gap-2" id="tabs">
+      <button data-page="order" class="tab px-4 py-2 rounded-full text-sm">Tonight's order</button>
+      <button data-page="forecast" class="tab px-4 py-2 rounded-full text-sm">Forecast · next 7 days</button>
+    </nav>
+
+    <!-- Forecast page -->
+    <div id="page-forecast" class="hidden space-y-5">
+      <div><h2>Here's your week</h2><p class="text-sm text-slate-400 mt-1">Customers forecast for each service. Tap a day to see why. Tomorrow's is the one Mise orders for tonight.</p></div>
+      <div id="week-strip" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3"></div>
+      <div class="grid lg:grid-cols-3 gap-6">
+        <div class="rounded-xl bg-slate-900 border border-slate-800 p-5 lg:col-span-2">
+          <div class="flex items-baseline gap-2"><h2 id="f-title">Tomorrow</h2><span id="f-date" class="text-xs text-slate-400"></span><span id="f-tag" class="ml-auto text-xs"></span></div>
+          <div class="flex items-baseline gap-3 mt-3"><div id="f-covers" class="text-5xl font-bold">–</div><div class="text-slate-400 text-sm">customers forecast</div></div>
+          <div id="f-split" class="text-sm text-slate-300 mt-1"></div>
+          <div id="f-weather" class="text-xs text-sky-300 mt-1"></div>
+          <ul id="f-drivers" class="mt-4 space-y-1.5 text-sm text-slate-300"></ul>
+        </div>
+        <div class="rounded-xl bg-slate-900 border border-slate-800 p-5 space-y-3">
+          <h2>How it's worked out</h2>
+          <p class="text-sm text-slate-400">Confirmed bookings, plus walk-ins predicted from day of week, real London weather (Open-Meteo), local events, payday and bank holidays, minus this restaurant's usual no-show rate.</p>
+          <p id="f-model" class="text-xs text-slate-500"></p>
+          <p class="text-xs text-slate-500">Every night the forecast is checked against what actually sold, so it learns this restaurant's street, regulars and menu.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-order" class="space-y-6">
+    <section>
+      <div class="flex items-baseline gap-2 mb-2"><h2>Your next 7 days</h2><button class="text-xs underline text-slate-400" onclick="showPage('forecast')">See the forecast →</button></div>
+      <div id="week-mini" class="grid grid-cols-4 sm:grid-cols-7 gap-2"></div>
+    </section>
+    <!-- Money screen: every demo ends here -->
+    <section id="money" class="rounded-2xl p-1 space-y-3">
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div class="rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-4 col-span-2 md:col-span-1"><div class="text-xs text-emerald-300">Saved tonight</div><div id="m-saved" class="text-3xl font-bold mt-1 text-emerald-300">£0</div><div id="m-year" class="text-xs text-emerald-200/80 mt-1">£0 over a year of Fridays</div></div>
+        <div class="rounded-xl bg-slate-900 border border-slate-800 p-4"><div class="text-xs text-slate-400">Over-ordering avoided</div><div id="m-over" class="text-2xl font-semibold mt-1">£0</div><div class="text-xs text-slate-500 mt-1">vs Marco's usual order</div></div>
+        <div class="rounded-xl bg-slate-900 border border-slate-800 p-4"><div class="text-xs text-slate-400">Negotiated off</div><div id="m-neg" class="text-2xl font-semibold mt-1">£0</div><div class="text-xs text-slate-500 mt-1">vs asking price</div></div>
+        <div class="rounded-xl bg-slate-900 border border-slate-800 p-4"><div class="text-xs text-slate-400">Overcharges declined</div><div id="m-blocked" class="text-2xl font-semibold mt-1 text-rose-400">£0</div><div class="text-xs text-slate-500 mt-1">by the capped card</div></div>
+        <div class="rounded-xl bg-slate-900 border border-slate-800 p-4"><div class="text-xs text-slate-400">Fresh food cost</div><div id="m-food" class="text-2xl font-semibold mt-1">–</div><div id="m-food-habit" class="text-xs text-slate-500 mt-1">of tomorrow's forecast takings</div></div>
+      </div>
+      <div class="flex flex-wrap gap-4 text-xs text-slate-400 px-1">
+        <span>Spent on cards: <b id="m-spent" class="text-slate-200">£0</b></span>
+        <span>Awaiting Marco: <b id="m-pending" class="text-amber-300">£0</b></span>
+        <a href="/api/report.csv" class="ml-auto underline text-indigo-300">Download bookkeeper report (CSV) ↓</a>
+      </div>
+      <div id="delivery" class="hidden"></div>
+    </section>
+
+    <!-- Forecast -> plan -> supplier chat -->
+    <section class="grid lg:grid-cols-2 gap-6">
+      <div class="rounded-xl bg-slate-900 border border-slate-800 p-4">
+        <div class="flex items-center gap-2 mb-2"><h2 class="font-semibold">What to buy</h2>
+          <label class="ml-auto text-xs px-3 py-1.5 rounded-full cursor-pointer" style="background:linear-gradient(#1a1a1a,#030403);color:#fff">Update stock: photo or CSV ↑<input id="stock-file" type="file" accept="image/*,.csv,.txt" class="hidden" /></label></div>
+        <div id="stock-src" class="text-xs text-slate-400 mb-2">Stock on hand: last night's count. Snap a photo of a handwritten count, or upload a CSV.</div>
+        <table class="w-full text-sm"><thead class="text-left text-xs text-slate-400"><tr><th class="py-1">Item</th><th class="text-right">In stock</th><th class="text-right">Order</th><th class="text-right">Usual</th><th class="pl-2">Supplier</th></tr></thead><tbody id="plan"></tbody></table>
+        <div class="text-xs text-slate-500 mt-2">Forecast × dish mix × recipe − stock, +5% buffer, max 2 days' cover (SP-8)</div>
+      </div>
+      <div class="rounded-xl bg-slate-900 border border-slate-800 p-4">
+        <div class="flex items-center gap-2 mb-2"><h2 class="font-semibold">Supplier chat</h2><span id="tg" class="text-xs text-slate-400"></span></div>
+        <div id="chat" class="space-y-2 text-sm max-h-80 overflow-y-auto"><div class="text-slate-500 text-sm">Haggling shows up here.</div></div>
+      </div>
+    </section>
+
+    <div class="grid lg:grid-cols-5 gap-6">
+      <!-- Trigger + run trace -->
+      <section class="lg:col-span-2 space-y-4">
+        <div class="rounded-xl bg-slate-900 border border-slate-800 p-4 space-y-3">
+          <div class="flex items-center gap-2">
+            <h2 class="font-semibold">Trigger</h2>
+            <select id="sample" class="ml-auto bg-slate-800 border border-slate-700 rounded px-2 py-1 text-sm"></select>
+          </div>
+          <textarea id="trigger" rows="9" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm mono" placeholder="Paste an email, contract or usage log..."></textarea>
+          <button id="run" class="w-full rounded-lg bg-indigo-500 hover:bg-indigo-400 font-medium py-2">Let the agent handle it</button>
+        </div>
+        <div class="rounded-xl bg-slate-900 border border-slate-800 p-4">
+          <div class="flex items-center gap-2 mb-3"><h2 class="font-semibold">Tonight's run</h2><span id="run-status" class="text-xs text-slate-400"></span></div>
+          <ol id="progress" class="space-y-0"></ol>
+          <details class="mt-3"><summary class="text-xs text-slate-400 cursor-pointer">Show the agent's full trace</summary>
+            <ol id="trace" class="space-y-2 text-sm max-h-[22rem] overflow-y-auto mt-2"></ol></details>
+        </div>
+      </section>
+
+      <!-- Audit trail -->
+      <section class="lg:col-span-3 space-y-4">
+        <div class="rounded-xl bg-slate-900 border border-slate-800 p-4">
+          <h2 class="font-semibold mb-3">Audit trail: every pound, every clause</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="text-left text-xs text-slate-400"><tr><th class="py-1 pr-2">When</th><th class="pr-2">Action</th><th class="pr-2">Who</th><th class="pr-2 text-right">Amount</th><th class="pr-2">Status</th><th class="pr-2">Clauses</th><th></th></tr></thead>
+              <tbody id="actions"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="rounded-xl bg-slate-900 border border-slate-800 p-4 space-y-2">
+          <h2 class="font-semibold">Ask the agent why</h2>
+          <div class="flex gap-2">
+            <input id="question" class="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm" placeholder="Why did you pay Harbour Fish £162?" />
+            <button id="ask" class="rounded-lg bg-slate-700 hover:bg-slate-600 px-4 text-sm">Ask</button>
+          </div>
+          <div id="answer" class="text-sm text-slate-300 whitespace-pre-wrap"></div>
+        </div>
+        <details class="rounded-xl bg-slate-900 border border-slate-800 p-4">
+          <summary class="font-semibold cursor-pointer">Written policy</summary>
+          <ul id="policy" class="mt-3 space-y-2 text-sm"></ul>
+        </details>
+      </section>
+    </div>
+    </div><!-- /page-order -->
+  </main>
+
+  <!-- Why drawer -->
+  <div id="why" class="hidden fixed inset-0 bg-black/60 flex justify-end" onclick="if(event.target===this)this.classList.add('hidden')">
+    <div class="w-full max-w-lg h-full bg-slate-900 border-l border-slate-800 p-6 overflow-y-auto fade-in" id="why-body"></div>
+  </div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const gbp = (p) => "£" + ((p || 0) / 100).toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const api = async (path, opts = {}) => {
+  const r = await fetch("/api" + path, { headers: { "Content-Type": "application/json" }, ...opts, body: opts.body ? JSON.stringify(opts.body) : undefined });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+};
+const STATUS = {
+  executed: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+  blocked: "bg-rose-500/15 text-rose-300 border-rose-500/30",
+  pending_approval: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+  rejected: "bg-slate-500/15 text-slate-300 border-slate-500/30",
+  failed: "bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30",
+};
+const badge = (s) => `<span class="text-xs px-2 py-0.5 rounded border ${STATUS[s] || "border-slate-700"}">${esc(s?.replace("_", " "))}</span>`;
+
+let samples = [], sampleIdx = -1, runId = null, lastEvent = 0, poller = null;
+
+async function loadHeader() {
+  const [h, p] = await Promise.all([api("/health"), api("/policy")]);
+  $("company").textContent = "Mise · " + p.company;
+  const chip = (ok, label) => `<span class="px-2 py-0.5 rounded border ${ok ? "border-slate-700" : "border-rose-500/50 text-rose-300"}">${esc(label)}</span>`;
+  $("chips").innerHTML = chip(h.stripe_key, "stripe " + (h.stripe_key ? "✓" : "key missing")) + chip(h.anthropic_key, h.model) + chip(true, "memory: " + h.memory);
+  $("policy").innerHTML = p.clauses.map((c) => `<li><span class="mono text-indigo-300">${esc(c.id)}</span> <b>${esc(c.title)}</b><div class="text-slate-400">${esc(c.text)}</div></li>`).join("");
+}
+
+async function loadSamples() {
+  samples = await api("/triggers");
+  $("sample").innerHTML = `<option value="">Sample triggers…</option>` + samples.map((s, i) => `<option value="${i}">${esc(s.name)}</option>`).join("");
+}
+$("sample").onchange = (e) => { const s = samples[e.target.value]; if (s) { $("trigger").value = s.content; sampleIdx = +e.target.value; } };
+
+async function refresh() {
+  const [s, acts] = await Promise.all([api("/summary"), api("/actions")]);
+  progressFromActions(acts);
+  $("m-spent").textContent = gbp(s.spent); $("m-pending").textContent = gbp(s.pending_approval);
+  $("m-saved").textContent = gbp(s.saved_total); $("m-year").textContent = gbp(s.saved_per_year) + " over a year of Fridays";
+  $("m-over").textContent = gbp(s.over_order_avoided); $("m-neg").textContent = gbp(s.negotiated_savings); $("m-blocked").textContent = gbp(s.overcharge_blocked);
+  $("m-food").textContent = s.food_cost_pct ? s.food_cost_pct + "%" : "–";
+  $("m-food-habit").textContent = s.habit_food_cost_pct ? `usual order: ${s.habit_food_cost_pct}% of forecast takings` : "of tomorrow's forecast takings";
+  $("actions").innerHTML = acts.map((a) => `
+    <tr class="border-t border-slate-800 fade-in">
+      <td class="py-2 pr-2 text-slate-400 mono text-xs">${new Date(a.ts * 1000).toLocaleTimeString()}</td>
+      <td class="pr-2">${esc({place_order: "Order", delivery_charge: "Delivery charge"}[a.tool] || a.tool)}</td>
+      <td class="pr-2">${esc(a.counterparty)}</td>
+      <td class="pr-2 text-right mono">${gbp(a.amount)}</td>
+      <td class="pr-2">${badge(a.status)}</td>
+      <td class="pr-2 mono text-xs text-indigo-300" title="${esc((a.clauses || []).join(" "))}">${esc((a.clauses || [])[0] || "")}${(a.clauses || []).length > 1 ? ` <span class="text-slate-500">+${a.clauses.length - 1}</span>` : ""}</td>
+      <td class="whitespace-nowrap text-right space-x-1">
+        <button class="text-xs underline text-slate-300" onclick="showWhy('${a.id}')">Why?</button>
+        ${a.status === "pending_approval" ? `<button class="text-xs px-2 py-0.5 rounded bg-emerald-600" onclick="decide('${a.id}','approve')">Approve</button><button class="text-xs px-2 py-0.5 rounded bg-slate-700" onclick="decide('${a.id}','reject')">Reject</button>` : ""}
+        ${a.tool === "place_order" && a.status === "executed" && a.counterparty === "Harbour Fish Co" ? `<button class="text-xs px-2 py-0.5 rounded bg-indigo-500" onclick="deliverSequence('${a.id}', ${a.amount})">Delivery ⟶</button>` : ""}
+        ${a.stripe_url ? `<a class="text-xs underline text-indigo-300" target="_blank" href="${esc(a.stripe_url)}">Stripe ↗</a>` : ""}
+      </td>
+    </tr>`).join("") || `<tr><td colspan="7" class="py-6 text-center text-slate-500">No actions yet. Feed the agent a trigger.</td></tr>`;
+}
+
+function traceItem(ev) {
+  const d = ev.data, t = ev.type;
+  let html = "";
+  if (t === "trigger") html = `<div class="text-slate-400">Trigger received <span class="mono text-xs">(${esc(d.source)})</span></div>`;
+  else if (t === "agent_text") html = `<div class="text-slate-200 whitespace-pre-wrap">${esc(d.text)}</div>`;
+  else if (t === "tool_call") html = `<div class="mono text-xs text-sky-300">→ ${esc(d.tool)} ${esc(JSON.stringify(d.input)).slice(0, 220)}</div>`;
+  else if (t === "tool_result") html = `<div class="mono text-xs">${d.output.status ? badge(d.output.status) : ""} ${esc((d.output.clauses || []).join(" "))} ${esc((d.output.why || []).join(" ") || d.output.error || "")}</div>`;
+  else if (t === "negotiation") html = `<div class="text-xs text-slate-400">${d.from === "agent" ? "Mise → " : "← "}${esc(d.supplier)}: <span class="text-slate-200">${esc(d.message)}</span></div>`;
+  else if (t === "error") html = `<div class="text-rose-300">${esc(d.message)}</div>`;
+  else if (t === "done") html = `<div class="text-slate-500 text-xs">Run ${esc(d.status)}</div>`;
+  return `<li class="fade-in border-l-2 border-slate-700 pl-3">${html}</li>`;
+}
+
+async function poll() {
+  if (!runId) return;
+  const r = await api(`/runs/${runId}?after=${lastEvent}`);
+  for (const ev of r.events) {
+    $("trace").insertAdjacentHTML("beforeend", traceItem(ev)); lastEvent = ev.id; progressFromEvent(ev);
+    if (ev.type === "negotiation") chatBubble(ev.data);
+  }
+  $("trace").scrollTop = $("trace").scrollHeight;
+  $("run-status").textContent = r.status;
+  if (r.events.length) refresh();
+  if (r.status !== "running" && r.status !== "unknown") { clearInterval(poller); poller = null; refresh(); }
+}
+
+async function runAgent() {
+  const content = $("trigger").value.trim();
+  if (!content) return;
+  $("trace").innerHTML = ""; lastEvent = 0;
+  const s = samples[sampleIdx];
+  ({ run_id: runId } = await api("/runs", { method: "POST", body: { content, source: s ? s.source : "manual" } }));
+  $("run-status").textContent = "running";
+  if (poller) clearInterval(poller);
+  poller = setInterval(poll, 1000);
+}
+$("run").onclick = runAgent;
+
+async function decide(id, verb) { await api(`/actions/${id}/${verb}`, { method: "POST", body: { approver: "Marco" } }); refresh(); }
+
+let chatStarted = false;
+function chatBubble(d) {
+  if (!chatStarted) { $("chat").innerHTML = ""; chatStarted = true; }
+  const me = d.from === "agent";
+  $("chat").insertAdjacentHTML("beforeend", `<div class="flex ${me ? "justify-end" : ""} fade-in"><div class="max-w-[85%] rounded-2xl px-3 py-2 ${me ? "bg-indigo-500/20 border border-indigo-500/30" : "bg-slate-800 border border-slate-700"}"><div class="text-[10px] uppercase tracking-wide ${me ? "text-indigo-300" : "text-slate-400"}">${me ? "Mise" : esc(d.supplier)}</div>${esc(d.message)}</div></div>`);
+  $("chat").scrollTop = $("chat").scrollHeight;
+}
+
+async function loadForecast() {
+  const [p, tg] = await Promise.all([api("/plan"), api("/telegram")]);
+  loadWeek();
+  renderPlan(p);
+  $("tg").textContent = tg.enabled ? `Telegram · linked: ${tg.linked.join(", ") || "none yet"}` : "simulated suppliers";
+}
+
+const u = (l) => (l.unit === "kg" || l.unit === "l" ? l.unit : "");
+function renderPlan(p) {
+  $("plan").innerHTML = p.map((l) => `<tr class="border-t border-slate-800 fade-in"><td class="py-1">${esc(l.item.replace("_", " "))}</td><td class="text-right mono text-slate-400">${l.on_hand}${u(l)}</td><td class="text-right mono">${l.qty}${u(l)}</td><td class="text-right mono ${l.habit_qty > l.qty ? "text-rose-300 line-through" : "text-slate-400"}">${l.habit_qty}</td><td class="pl-2 text-xs text-slate-400">${esc(l.supplier)}</td></tr>`).join("")
+    || `<tr><td colspan="5" class="py-4 text-center text-slate-500">Stock covers tomorrow. Nothing to order.</td></tr>`;
+}
+$("stock-file").onchange = (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  $("stock-src").textContent = f.type.startsWith("image/") ? "Reading your photo…" : "Reading your file…";
+  const rd = new FileReader();
+  rd.onload = async () => {
+    try {
+      const r = await api("/stock", { method: "POST", body: { filename: f.name, content_type: f.type || "text/csv", data: String(rd.result).split(",")[1] } });
+      renderPlan(r.plan);
+      const got = Object.entries(r.read).map(([k, v]) => `${k.replace("_", " ")} ${v}${r.units[k] === "kg" || r.units[k] === "l" ? r.units[k] : ""}`).join(", ");
+      $("stock-src").innerHTML = `<span class="text-emerald-300">Updated from your ${r.source.from} (${esc(f.name)}) at ${r.source.at}:</span> ${esc(got)}. Order recalculated.`;
+    } catch (err) { $("stock-src").textContent = "Couldn't read that: " + err.message; }
+    e.target.value = "";
+  };
+  rd.readAsDataURL(f);
+};
+
+let week = [], dayIdx = 0;
+const wx = (f) => (f.rain >= 3 ? "Rain " + f.rain + "mm" : f.rain >= 0.5 ? "Showers" : "Dry") + " · " + Math.round(f.temp) + "°";
+async function loadWeek() {
+  week = await api("/forecast/week");
+  const max = Math.max(...week.map((f) => f.covers));
+  const card = (f, i, big) => `<button onclick="${big ? "" : "showPage('forecast');"}renderDay(${i})" data-day="${i}"
+      class="day text-left rounded-xl border p-${big ? 4 : 3} transition ${i === dayIdx && big ? "bg-white border-slate-600" : "bg-slate-900 border-slate-800"} hover:border-slate-600">
+      <div class="text-xs text-slate-400">${i === 0 ? "Tomorrow" : f.weekday.slice(0, 3)} <span class="text-slate-500">${f.date.slice(8)}</span></div>
+      <div class="${big ? "text-3xl" : "text-xl"} mt-1" style="font-weight:450;letter-spacing:-.04em">${f.covers}</div>
+      <div class="h-1 rounded bg-slate-800 mt-2"><div class="h-1 rounded" style="width:${Math.round((100 * f.covers) / max)}%;background:${i === 0 ? "#477a5b" : "#bdbdbd"}"></div></div>
+      <div class="text-[11px] text-slate-400 mt-2">${wx(f)}</div>
+      ${big ? `<div class="text-[11px] text-slate-500">${f.bookings} booked${f.event_name ? " · event" : ""}</div>` : ""}
+    </button>`;
+  $("week-strip").innerHTML = week.map((f, i) => card(f, i, true)).join("");
+  $("week-mini").innerHTML = week.map((f, i) => card(f, i, false)).join("");
+  renderDay(dayIdx);
+}
+function renderDay(i) {
+  dayIdx = i; const f = week[i]; if (!f) return;
+  $("f-title").textContent = i === 0 ? "Tomorrow" : f.weekday;
+  $("f-date").textContent = `${f.weekday} ${f.date}`; $("f-covers").textContent = f.covers;
+  $("f-tag").innerHTML = i === 0 ? `<span class="px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-300">Mise orders for this tonight</span>` : `<span class="text-slate-500">Ordered the night before</span>`;
+  $("f-split").textContent = `${f.bookings} booked + ${f.walk_ins} walk-ins − ${f.no_shows} no-shows`;
+  $("f-weather").textContent = f.weather;
+  $("f-drivers").innerHTML = f.drivers.map((d) => `<li>• ${esc(d)}</li>`).join("");
+  $("f-model").textContent = f.model;
+  document.querySelectorAll("#week-strip .day").forEach((b) => {
+    const on = +b.dataset.day === i;
+    b.classList.toggle("bg-white", on); b.classList.toggle("border-slate-600", on);
+    b.classList.toggle("bg-slate-900", !on); b.classList.toggle("border-slate-800", !on);
+  });
+}
+function showPage(p) {
+  $("page-forecast").classList.toggle("hidden", p !== "forecast");
+  $("page-order").classList.toggle("hidden", p !== "order");
+  document.querySelectorAll("#tabs .tab").forEach((b) => {
+    const on = b.dataset.page === p;
+    b.style.background = on ? "linear-gradient(#1a1a1a,#030403)" : "#f1f1f1"; b.style.color = on ? "#fff" : "#555";
+  });
+}
+document.querySelectorAll("#tabs .tab").forEach((b) => (b.onclick = () => showPage(b.dataset.page)));
+showPage("order");
+
+const overcharge = (amount) => Math.round((amount * 23) / 18 / 100) * 100;
+async function deliver(id, amount) {
+  try {
+    const r = await api("/demo/deliver", { method: "POST", body: { action_id: id, amount: amount || null } });
+    const ok = r.approved;
+    $("delivery").className = "flex justify-center py-4 fade-in";
+    $("delivery").innerHTML = `<article class="receipt ${ok ? "" : "declined"}">
+      <div class="row" style="font-family:'DM Sans',sans-serif;font-size:18px;font-weight:550;letter-spacing:-1px;color:#202020"><span style="color:#202020">mise</span><span>${ok ? "✓" : "✕"}</span></div>
+      <div class="amt"><div style="font-size:9px;letter-spacing:.15em;color:#919191">${ok ? "DELIVERY PAID" : "CHARGE DECLINED"}</div><strong>${gbp(r.amount)}</strong><div style="font-size:11px">${esc(r.supplier || "")} · agreed ${gbp(r.agreed)}</div></div>
+      <div class="stamp">${ok ? "PAID. MATCHES THE AGREED PRICE." : "OVER THE AGREED PRICE · SP-9"}</div>
+      <div class="row"><span>Card cap</span><span>${gbp(r.agreed)}</span></div>
+      <div class="row"><span>Rule</span><span>SP-9 card is the purchase order</span></div>
+      <div class="row"><span>Stripe</span><a class="underline" target="_blank" href="${esc(r.stripe_url)}">${esc((r.stripe_id || "").slice(0, 14))}… ↗</a></div>
+      <div style="text-align:center;color:#909090;font-size:9px;margin-top:12px">Stripe test mode · ${new Date().toLocaleTimeString()}</div>
+    </article>`;
+  } catch (e) { $("delivery").className = "rounded-xl p-4 border border-fuchsia-500/40"; $("delivery").textContent = "Delivery failed: " + e.message; }
+  refresh();
+}
+async function deliverSequence(id, amount) { await deliver(id, overcharge(amount)); setTimeout(() => deliver(id), 2500); }
+const STEPS = ["Forecast tomorrow", "Plan the order", "Haggle with suppliers", "Marco approves the fish", "Cards issued", "Delivered and paid"];
+let stepOn = [0, 0, 0, 0, 0, 0]; // 0 todo, 1 active, 2 done
+function renderProgress() {
+  $("progress").innerHTML = STEPS.map((t, i) => {
+    const st = stepOn[i];
+    const dot = st === 2 ? "background:#477a5b;border-color:#477a5b" : st === 1 ? "background:#fff;border-color:#646cd7;box-shadow:0 0 0 4px #646cd722" : "background:#f1f1f1;border-color:#d8d8d8";
+    return `<li class="flex items-center gap-3 py-1.5"><span class="relative flex flex-col items-center"><span style="width:14px;height:14px;border-radius:50%;border:2px solid;${dot};display:inline-block"></span></span>
+      <span class="text-sm ${st === 0 ? "text-slate-500" : "text-slate-100"}">${t}</span>${st === 1 ? `<span class="text-xs text-indigo-300 ml-auto">${i === 3 ? "waiting for Marco" : "working…"}</span>` : st === 2 ? `<span class="text-xs text-emerald-300 ml-auto">done</span>` : ""}</li>`;
+  }).join("");
+}
+function setStep(i, st) { for (let k = 0; k < i; k++) if (stepOn[k] < 2) stepOn[k] = 2; stepOn[i] = Math.max(stepOn[i], st); renderProgress(); }
+function progressFromEvent(ev) {
+  const d = ev.data, t = ev.type;
+  if (t === "trigger") { stepOn = [1, 0, 0, 0, 0, 0]; renderProgress(); }
+  if (t === "tool_call" && d.tool === "forecast_covers") setStep(0, 1);
+  if (t === "tool_call" && d.tool === "plan_order") setStep(1, 1);
+  if (t === "tool_call" && d.tool === "negotiate") setStep(2, 1);
+  if (t === "tool_result" && d.tool === "place_order" && d.output.status === "pending_approval") setStep(3, 1);
+}
+function progressFromActions(acts) {
+  if (!acts.length) return;
+  const fish = acts.find((a) => a.tool === "place_order" && a.counterparty === "Harbour Fish Co");
+  if (fish && fish.status === "pending_approval") setStep(3, 1);
+  if (fish && fish.status === "executed") setStep(4, 2);
+  if (acts.some((a) => a.tool === "delivery_charge" && a.status === "executed")) setStep(5, 2);
+}
+async function deliverLatest() {
+  const acts = await api("/actions");
+  const placed = acts.filter((a) => a.tool === "place_order" && a.status === "executed");
+  const o = placed.find((a) => a.counterparty === "Harbour Fish Co") || placed[0];
+  if (!o) return;
+  await deliver(o.id, overcharge(o.amount));
+  setTimeout(() => deliver(o.id), 2500);
+}
+
+async function showWhy(id) {
+  const w = await api(`/actions/${id}/why`), a = w.action;
+  $("why-body").innerHTML = `
+    <div class="flex items-center gap-2"><h3 class="text-lg font-semibold">Why ${gbp(a.amount)} → ${esc(a.counterparty)}?</h3><button class="ml-auto text-slate-400" onclick="$('why').classList.add('hidden')">✕</button></div>
+    <div class="mt-2">${badge(a.status)} <span class="mono text-xs text-slate-400">${esc(a.id)} · ${esc(a.tool)}</span></div>
+    <h4 class="mt-5 text-xs uppercase tracking-wide text-slate-400">Agent's reason</h4><p class="mt-1">${esc(a.reason)}</p>
+    <h4 class="mt-5 text-xs uppercase tracking-wide text-slate-400">Policy decision</h4>
+    ${w.clauses.map((c) => `<div class="mt-2 rounded-lg border border-indigo-500/30 bg-indigo-500/10 p-3"><span class="mono text-indigo-300">${esc(c.id)}</span> <b>${esc(c.title)}</b><div class="text-sm text-slate-300">${esc(c.text)}</div></div>`).join("") || `<p class="text-sm text-slate-400">No clause authorises this (default-deny).</p>`}
+    <ul class="mt-2 text-sm text-slate-300 list-disc pl-5">${(a.decision_reasons || []).map((r) => `<li>${esc(r)}</li>`).join("")}</ul>
+    <h4 class="mt-5 text-xs uppercase tracking-wide text-slate-400">Evidence quoted</h4>
+    ${(a.evidence || []).map((e) => `<blockquote class="mt-2 border-l-2 border-slate-600 pl-3 text-sm text-slate-300 italic">${esc(e)}</blockquote>`).join("") || `<p class="text-sm text-slate-400">None.</p>`}
+    <h4 class="mt-5 text-xs uppercase tracking-wide text-slate-400">What memory recalls</h4>
+    <ul class="mt-1 text-sm text-slate-400 space-y-1">${w.memory.map((m) => `<li>• ${esc(m)}</li>`).join("") || "<li>Nothing yet.</li>"}</ul>
+    ${a.approved_by ? `<p class="mt-5 text-sm">Signed off by <b>${esc(a.approved_by)}</b></p>` : ""}
+    ${a.stripe_url ? `<a class="mt-5 inline-block underline text-indigo-300" target="_blank" href="${esc(a.stripe_url)}">Open ${esc(a.stripe_id)} in Stripe ↗</a>` : ""}`;
+  $("why").classList.remove("hidden");
+}
+
+$("ask").onclick = async () => {
+  const q = $("question").value.trim(); if (!q) return;
+  $("answer").textContent = "Thinking…";
+  try { $("answer").textContent = (await api("/ask", { method: "POST", body: { question: q } })).answer; }
+  catch (e) { $("answer").textContent = "Error: " + e.message; }
+};
+
+// Demo keys: L = load next sample and run, G = jump to the money screen, R = reset
+document.addEventListener("keydown", async (e) => {
+  if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) return;
+  const k = e.key.toLowerCase();
+  if (k === "l" && samples.length) {
+    sampleIdx = (sampleIdx + 1) % samples.length; $("sample").value = sampleIdx; $("trigger").value = samples[sampleIdx].content; runAgent();
+  } else if (k === "d") {
+    deliverLatest();
+  } else if (k === "g") {
+    $("money").scrollIntoView({ behavior: "smooth" }); $("money").classList.remove("pulse"); void $("money").offsetWidth; $("money").classList.add("pulse");
+  } else if (k === "r") {
+    await api("/demo/reset", { method: "POST" }); $("trace").innerHTML = ""; $("chat").innerHTML = ""; chatStarted = false; $("delivery").className = "hidden"; stepOn = [0, 0, 0, 0, 0, 0]; renderProgress(); sampleIdx = -1; refresh();
+  }
+});
+
+renderProgress(); loadHeader(); loadSamples(); loadForecast(); refresh(); setInterval(refresh, 2000);
+</script>
+</body>
+</html>

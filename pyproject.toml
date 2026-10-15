@@ -1,0 +1,21 @@
+[project]
+name = "briefcase-hack"
+version = "0.1.0"
+description = "Policy-gated money agent on Stripe test mode (Briefcase x Stripe hackathon, Oct 2026)"
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic",
+    "fastapi",
+    "uvicorn[standard]",
+    "stripe",
+    "python-dotenv",
+    "pyyaml",
+    "httpx",
+    "openai",
+]
+
+[project.optional-dependencies]
+cognee = ["cognee"]
+
+[tool.uv]
+package = false

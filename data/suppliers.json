@@ -1,0 +1,83 @@
+{
+  "Harbour Fish Co": {
+    "telegram": "harbour",
+    "items": {
+      "sea_bass": {
+        "unit": "kg",
+        "list": 1950,
+        "last": 1850,
+        "floor": 1750,
+        "perishable": true
+      }
+    },
+    "delivery_overcharge": {
+      "sea_bass": 2300
+    }
+  },
+  "Green Lane Produce": {
+    "telegram": "greenlane",
+    "items": {
+      "tomatoes": {
+        "unit": "kg",
+        "list": 340,
+        "last": 320,
+        "floor": 300,
+        "perishable": true
+      },
+      "courgettes": {
+        "unit": "kg",
+        "list": 290,
+        "last": 280,
+        "floor": 260,
+        "perishable": true
+      },
+      "salad": {
+        "unit": "kg",
+        "list": 620,
+        "last": 600,
+        "floor": 560,
+        "perishable": true
+      },
+      "herbs": {
+        "unit": "bunch",
+        "list": 130,
+        "last": 120,
+        "floor": 110,
+        "perishable": true
+      },
+      "lemons": {
+        "unit": "each",
+        "list": 38,
+        "last": 35,
+        "floor": 32,
+        "perishable": false
+      }
+    }
+  },
+  "Meadow Dairy": {
+    "telegram": "meadow",
+    "items": {
+      "burrata": {
+        "unit": "each",
+        "list": 260,
+        "last": 250,
+        "floor": 235,
+        "perishable": true
+      },
+      "butter": {
+        "unit": "kg",
+        "list": 880,
+        "last": 850,
+        "floor": 800,
+        "perishable": false
+      },
+      "cream": {
+        "unit": "l",
+        "list": 430,
+        "last": 420,
+        "floor": 395,
+        "perishable": true
+      }
+    }
+  }
+}

@@ -1,0 +1,57 @@
+# Marco's buying rules. Clause text is what the agent reads and what the audit trail quotes.
+# The `rule` block is what app/policy.py enforces in code: the model can't talk its way past it.
+# Amounts are in pence. Default-deny: if no clause authorises an order, it's blocked.
+
+company: Marco's, Camden (60-seat independent restaurant)
+currency: gbp
+
+counterparties:
+  Harbour Fish Co: {}
+  Green Lane Produce: {}
+  Meadow Dairy: {}
+
+clauses:
+  - id: SP-1
+    title: Approved suppliers only
+    text: The agent only orders from and pays Harbour Fish Co, Green Lane Produce and Meadow Dairy.
+    rule: {type: allowlist, applies_to: spend}
+
+  - id: SP-2
+    title: Everyday orders go through
+    text: The agent may place an order of up to £150 on its own.
+    rule: {type: auto_approve_upto, applies_to: spend, amount: 15000}
+
+  - id: SP-3
+    title: Bigger orders wait for Marco
+    text: Any order over £150 waits for Marco to approve it before a card is issued.
+    rule: {type: require_approval_over, applies_to: spend, amount: 15000}
+
+  - id: SP-4
+    title: Order ceiling
+    text: No single order is ever more than £600, approved or not.
+    rule: {type: hard_cap, applies_to: spend, amount: 60000}
+
+  - id: SP-5
+    title: Daily ceiling
+    text: Total fresh-food orders in one day stay at or under £800.
+    rule: {type: daily_cap, applies_to: spend, amount: 80000}
+
+  - id: SP-6
+    title: No double orders
+    text: The agent never places the same order with the same supplier twice in 24 hours.
+    rule: {type: no_duplicates, applies_to: spend}
+
+  - id: SP-7
+    title: Never pay more than last time
+    text: The agent never agrees a unit price above the last price Marco paid for that item.
+    rule: {type: max_unit_price_last, applies_to: spend}
+
+  - id: SP-8
+    title: Buy for tomorrow, not for the bin
+    text: Perishables are bought for the forecast need plus a 5% buffer, minus stock on hand, and never more than 2 days' cover.
+    rule: {type: evidence_required, applies_to: spend}
+
+  - id: SP-9
+    title: The card is the purchase order
+    text: Each order is paid with its own virtual card capped at the agreed total, so a supplier can't charge more than was agreed.
+    rule: {type: evidence_required, applies_to: delivery}

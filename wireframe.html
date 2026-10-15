@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mise wireframe</title>
+<style>
+  :root { --bg:#f6f5f2; --card:#fff; --ink:#1d1d1f; --mute:#6b6b70; --line:#d8d6d0; --accent:#4f46e5; --good:#0f8a5f; --bad:#c2410c; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:14px/1.45 system-ui, sans-serif; background:var(--bg); color:var(--ink); padding:20px 16px 80px; }
+  h1 { font-size:18px; margin:0 0 4px; } .sub { color:var(--mute); margin:0 0 18px; }
+  h2 { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--mute); margin:26px 0 10px; }
+  .row { display:flex; align-items:stretch; gap:0; overflow-x:auto; padding-bottom:8px; }
+  .box { flex:0 0 220px; background:var(--card); border:1.5px solid var(--line); border-radius:12px; padding:12px; }
+  .box.hero { border-color:var(--bad); box-shadow:0 0 0 3px #c2410c22; }
+  .box.money { border-color:var(--good); box-shadow:0 0 0 3px #0f8a5f22; }
+  .box .t { font-weight:650; margin-bottom:6px; } .box .n { font-size:11px; color:var(--mute); }
+  .box ul { margin:6px 0 0; padding-left:16px; } .box li { margin:2px 0; }
+  .arrow { flex:0 0 34px; display:flex; align-items:center; justify-content:center; color:var(--mute); font-size:20px; }
+  .data .box { flex-basis:190px; background:#fbfaf7; border-style:dashed; }
+  [contenteditable]:focus { outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+  #export { position:fixed; right:16px; bottom:16px; background:var(--accent); color:#fff; border:0; border-radius:10px; padding:10px 16px; font-weight:600; cursor:pointer; }
+  #toast { position:fixed; left:16px; bottom:22px; color:var(--good); font-weight:600; }
+</style>
+</head>
+<body>
+<h1 contenteditable>Mise: the 11pm order, done for you</h1>
+<p class="sub" contenteditable>Every label is editable. Click "Export changes", paste the JSON back to Claude, and the file gets regenerated to match.</p>
+
+<h2 contenteditable>Screens, in demo order</h2>
+<div class="row" id="screens"></div>
+
+<h2 contenteditable>How the numbers are made</h2>
+<div class="row data" id="data"></div>
+
+<button id="export">Export changes</button><span id="toast"></span>
+
+<script>
+const SCREENS = [
+  { t: "1. Trigger", n: "22:45, service over", items: ["Nightly order trigger (L key)", "Agent trace starts streaming"] },
+  { t: "2. Tomorrow", n: "Forecast card", items: ["165 customers", "124 booked + 51 walk-ins − 10 no-shows", "Rain 9.4mm: −22 walk-ins (real forecast)", "Gig nearby: +12", "Model accuracy ±4 walk-ins"] },
+  { t: "3. What to buy", n: "Order plan", items: ["Sea bass 9kg (usual 14, struck through)", "Every line vs Marco's habit", "SP-8: max 2 days' cover"] },
+  { t: "4. Supplier chat", n: "Telegram, teammate plays Harbour Fish", items: ["Mise: can you do £17.50/kg?", "Harbour: £19.50 today", "Mise: last was £18.50, £18.00?", "Harbour: ok, deal"] },
+  { t: "5. Marco approves", n: "Audit row: pending approval", items: ["£162 > £150 (SP-3)", "One tap: Approve", "Card capped at £162 issued (SP-9)"] },
+  { t: "6. Delivery (HERO)", n: "D key or /charge on Telegram", items: ["Harbour charges £207", "DECLINED by Stripe (card cap)", "Mise: we agreed £162", "£162 charged: PAID"], cls: "hero" },
+  { t: "7. Why?", n: "Drawer on the audit row", items: ["Reason + clause ids", "Evidence: forecast, quantities, quotes", "Memory recall (Cognee)", "Open in Stripe ↗"] },
+  { t: "8. Money screen", n: "G key, demo ends here", items: ["Saved tonight £", "Over a year of Fridays £", "Over-ordering / negotiated / overcharge", "Fresh food cost % vs usual", "Bookkeeper report CSV"], cls: "money" },
+];
+const DATA = [
+  { t: "Inputs", n: "real + synthetic", items: ["180 days covers (synthetic)", "London weather: Open-Meteo (real)", "Bank holidays: gov.uk (real)", "Bookings, events (synthetic)"] },
+  { t: "Forecast", n: "app/forecast.py", items: ["Linear regression: walk-ins", "Weekday no-show rate", "Covers = booked + walk-ins − no-shows"] },
+  { t: "Order plan", n: "app/plan.py", items: ["Covers × dish mix × grams", "− stock on hand, +5% buffer", "Cap 2 days' cover"] },
+  { t: "Haggle rules", n: "app/negotiate.py", items: ["Open 5% under last price", "Counter halfway", "Never above last price (SP-7)", "Telegram or simulated supplier"] },
+  { t: "Policy gate", n: "policy.yaml + policy.py", items: ["SP-1 approved suppliers", "SP-2/3 £150 auto / approval", "SP-4/5 order and daily caps", "SP-6 no doubles"] },
+  { t: "Stripe Issuing", n: "app/stripe_ops.py", items: ["One virtual card per order", "Spending limit = agreed total", "Supplier charge = test authorization", "Captured = money moved"] },
+  { t: "Record", n: "audit.db + Cognee", items: ["Every action + clauses + evidence", "Memory of prices and promises", "Savings + CSV for the bookkeeper"] },
+];
+
+function render(id, list) {
+  const row = document.getElementById(id);
+  row.innerHTML = list.map((b, i) => `${i ? '<div class="arrow">→</div>' : ""}
+    <div class="box ${b.cls || ""}" data-cls="${b.cls || ""}">
+      <div class="t" contenteditable>${b.t}</div><div class="n" contenteditable>${b.n}</div>
+      <ul>${b.items.map((x) => `<li contenteditable>${x}</li>`).join("")}</ul>
+    </div>`).join("");
+}
+render("screens", SCREENS);
+render("data", DATA);
+
+function read(id) {
+  return [...document.querySelectorAll(`#${id} .box`)].map((b) => ({
+    t: b.querySelector(".t").innerText.trim(), n: b.querySelector(".n").innerText.trim(),
+    items: [...b.querySelectorAll("li")].map((li) => li.innerText.trim()).filter(Boolean),
+    ...(b.dataset.cls ? { cls: b.dataset.cls } : {}),
+  }));
+}
+document.getElementById("export").onclick = async () => {
+  const json = JSON.stringify({ title: document.querySelector("h1").innerText, screens: read("screens"), data: read("data") }, null, 2);
+  try { await navigator.clipboard.writeText(json); document.getElementById("toast").textContent = "Copied. Paste it to Claude."; }
+  catch { prompt("Copy this JSON:", json); }
+};
+</script>
+</body>
+</html>

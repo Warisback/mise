@@ -1,0 +1,14 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+data/audit.db*
+data/memory.jsonl
+.cognee_system/
+.data_storage/
+node_modules/
+.DS_Store
+data/telegram_chats.json
+CLAUDE.md
+BUILD.md
+.claude/
